@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RequestMapping("/clientes")
@@ -21,14 +22,27 @@ public class ClienteController {
     @GetMapping
     public ResponseEntity<List<Cliente>> listaClientes(){
 
-        return ResponseEntity.ok(clienteService.listaClientes());
+        return ResponseEntity.ok(clienteService.listarClientes());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarCliente(@PathVariable Long id){
-        Cliente cliente = this.clienteService.buscarCliente(id);
+    @GetMapping("/{buscar}")
+    public ResponseEntity<?> buscarCliente(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cpf) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(cliente);
+        if (nome != null && !nome.isBlank()) {
+            List<Cliente> cliente = clienteService.buscarPorNome ();
+
+            return ResponseEntity.ok(cliente);
+        }
+        if (cpf != null && !cpf.isBlank()) {
+            Cliente cliente = clienteService.buscaPorCpf ();
+            return ResponseEntity.ok(cliente);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Informe nome ou cpf para fazer a pesquisa");
     }
 
     @PostMapping
@@ -39,10 +53,10 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCliente(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCliente(@PathVariable UUID id){
 
-        clienteService.deleteCliente(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        clienteService.deletarCliente(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
 
