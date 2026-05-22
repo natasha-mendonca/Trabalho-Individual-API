@@ -3,6 +3,8 @@ package org.serratec.trabalhoIndividual.service;
 import org.serratec.trabalhoIndividual.entity.Cliente;
 import org.serratec.trabalhoIndividual.exception.ClienteNaoEncontrado;
 import org.serratec.trabalhoIndividual.exception.CpfJaCadastrado;
+import org.serratec.trabalhoIndividual.model.ClienteBuscar;
+import org.serratec.trabalhoIndividual.model.ClienteCriar;
 import org.serratec.trabalhoIndividual.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,13 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public List<Cliente> listarClientes() {
-        return clienteRepository.findAll();
+    public List<ClienteBuscar> listarClientes() {
+        List<Cliente> clientes = this.clienteRepository.findAll();
+
+        return clientes
+                .stream()
+                .map(cliente -> new ClienteBuscar(cliente))
+                .toList();
     }
 
     public Cliente buscarPorCpf (String cpf) {
@@ -42,11 +49,12 @@ public class ClienteService {
         return clienteOpt.get();
     }
 
-    public Cliente inserirCliente(Cliente cliente) {
+    public ClienteBuscar inserirCliente(ClienteCriar cliente) {
         if (clienteRepository.findByCpf(cliente.getCpf()).isPresent()){
             throw new CpfJaCadastrado("CPF ja Cadastrado");
         }
-        return clienteRepository.save(cliente);
+        Cliente cliente1 = new Cliente(cliente);
+        return new ClienteBuscar(clienteRepository.save(cliente1));
     }
 
     public void deletarCliente(UUID id) {

@@ -2,6 +2,8 @@ package org.serratec.trabalhoIndividual.controller;
 
 import jakarta.validation.Valid;
 import org.serratec.trabalhoIndividual.entity.Cliente;
+import org.serratec.trabalhoIndividual.model.ClienteBuscar;
+import org.serratec.trabalhoIndividual.model.ClienteCriar;
 import org.serratec.trabalhoIndividual.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,30 +23,24 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @GetMapping
-    public ResponseEntity<List<Cliente>> listaClientes(){
-
-        return ResponseEntity.ok(clienteService.listarClientes());
-    }
-
-    @GetMapping("/{buscar}")
     public ResponseEntity<?> buscarCliente(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String cpf) {
 
         if (nome != null && !nome.isBlank()) {
-            List<Cliente> clientes = new ArrayList<>();
+            List<ClienteBuscar> clientes = new ArrayList<>();
             Cliente cliente1 = clienteService.buscarPorNome(nome);
-            clientes.add(cliente1);
+            clientes.add(new ClienteBuscar(cliente1));
 
             return ResponseEntity.ok(clientes);
         }
         if (cpf != null && !cpf.isBlank()) {
             Cliente cliente = clienteService.buscarPorCpf(cpf);
-            return ResponseEntity.ok(cliente);
+            return ResponseEntity.ok(new ClienteBuscar(cliente));
         }
         if (cpf == null && nome == null) {
-
-            return ResponseEntity.ok(clienteService.listarClientes());
+            List<ClienteBuscar> clientes = clienteService.listarClientes();
+            return ResponseEntity.ok(clientes);
         }
 
         return ResponseEntity
@@ -53,8 +49,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> inserirCliente(@RequestBody @Valid Cliente cliente){
-        Cliente clientenovo = this.clienteService.inserirCliente(cliente);
+    public ResponseEntity<ClienteBuscar> inserirCliente(@RequestBody @Valid ClienteCriar cliente){
+
+        ClienteBuscar clientenovo = this.clienteService.inserirCliente(cliente);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(clientenovo);
     }

@@ -1,10 +1,16 @@
 package org.serratec.trabalhoIndividual.service;
 
 
+import org.serratec.trabalhoIndividual.entity.Cliente;
 import org.serratec.trabalhoIndividual.entity.Veiculo;
 import org.serratec.trabalhoIndividual.exception.CampoObrigatorio;
+import org.serratec.trabalhoIndividual.exception.ClienteNaoEncontrado;
 import org.serratec.trabalhoIndividual.exception.PlacaJaCadastrada;
 import org.serratec.trabalhoIndividual.exception.VeiculoNaoEncontrado;
+import org.serratec.trabalhoIndividual.model.VeiculoAtualizar;
+import org.serratec.trabalhoIndividual.model.VeiculoBuscar;
+import org.serratec.trabalhoIndividual.model.VeiculoCriar;
+import org.serratec.trabalhoIndividual.repository.ClienteRepository;
 import org.serratec.trabalhoIndividual.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +24,7 @@ public class VeiculoService {
 
     @Autowired
     private VeiculoRepository veiculoRepository;
+    private ClienteRepository clienteRepository;
 
     public List<Veiculo> listarVeiculo() {
         return veiculoRepository.findAll();
@@ -49,11 +56,17 @@ public class VeiculoService {
         }
         return veiculoOpt.get();
     }
-    public Veiculo cadastrarVeiculo(Veiculo veiculo) {
+    public VeiculoBuscar cadastrarVeiculo(VeiculoCriar veiculo) {
+        Optional<Cliente> clienteOpt = clienteRepository.findById(veiculo.getClienteId());
+        if(clienteOpt.isEmpty()){
+            throw new ClienteNaoEncontrado("Cliente não encontrado.");
+        }
+
         if (veiculoRepository.findByPlaca(veiculo.getPlaca()).isPresent()) {
             throw new PlacaJaCadastrada("Placa ja Cadastrada");
         }
-        return veiculoRepository.save(veiculo);
+        Veiculo veiculo1 = new Veiculo(veiculo, clienteOpt.get());
+        return new VeiculoBuscar(veiculoRepository.save(veiculo1));
     }
 
     public void deletarVeiculo(UUID id) {
@@ -64,7 +77,7 @@ public class VeiculoService {
         this.veiculoRepository.deleteById(id);
     }
 
-    public Veiculo atualizarVeiculo (UUID id,Veiculo veiculo){
+    public VeiculoAtualizar atualizarVeiculo (UUID id, VeiculoAtualizar veiculo){
         Optional<Veiculo> veiculoOpt = veiculoRepository.findById(id);
 
         if (veiculo.isVendido() && veiculo.getValorVenda() == null) {
@@ -84,7 +97,6 @@ public class VeiculoService {
         veiculoExistente.setVendido(veiculo.isVendido());
         veiculoExistente.setValorVenda(veiculo.getValorVenda());
 
-
-        return veiculoRepository.save(veiculoExistente);
+        return new VeiculoAtualizar(veiculoRepository.save(veiculoExistente));
     }
 }
