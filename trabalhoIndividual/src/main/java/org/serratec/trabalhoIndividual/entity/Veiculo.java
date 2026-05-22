@@ -22,10 +22,11 @@ public class Veiculo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @ManyToOne
     @NotNull
     @Size(max = 60)
     @Column
-    private String cliente;
+    private Cliente cliente;
 
     @NotNull
     @Column
@@ -58,6 +59,6 @@ public class Veiculo {
 
     @Min(0)
     @Column
-    private double valorVenda;
+    private Double valorVenda;
 
 }

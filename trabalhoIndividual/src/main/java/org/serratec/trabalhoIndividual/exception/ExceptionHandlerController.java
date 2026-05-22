@@ -9,11 +9,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ExceptionHandlerController {
+public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ClienteNaoEncontrado.class)
     public ResponseEntity<MensagemDeErro> handleClienteNaoEcontrado(ClienteNaoEncontrado ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemDeErro(ex.getMessage()));
@@ -32,6 +33,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler(PlacaJaCadastrada.class)
     public ResponseEntity<MensagemDeErro> handlePlacaJaCadastrada(PlacaJaCadastrada ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new MensagemDeErro(ex.getMessage()));
+    }
+
+    @ExceptionHandler(CampoObrigatorio.class)
+    public ResponseEntity<MensagemDeErro> handleCampoObrigatorio(CampoObrigatorio ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensagemDeErro(ex.getMessage()));
     }
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

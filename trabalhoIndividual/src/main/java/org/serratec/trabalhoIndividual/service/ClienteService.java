@@ -22,11 +22,21 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public Cliente buscarCliente(String cpf) {
+    public Cliente buscarPorCpf (String cpf) {
         Optional<Cliente> clienteOpt = this.clienteRepository.findByCpf(cpf);
 
         if (clienteOpt.isEmpty()) {
-            throw new ClienteNaoEncontrado("Cliente não encontrado");
+            throw new ClienteNaoEncontrado("Cliente não Encontrado");
+        }
+
+        return clienteOpt.get();
+    }
+
+    public Cliente buscarPorNome(String nome) {
+        Optional<Cliente> clienteOpt = this.clienteRepository.findByCpf(nome);
+
+        if (clienteOpt.isEmpty()) {
+            throw new ClienteNaoEncontrado("Cliente não Encontrado");
         }
 
         return clienteOpt.get();
@@ -34,19 +44,18 @@ public class ClienteService {
 
     public Cliente inserirCliente(Cliente cliente) {
         if (clienteRepository.findByCpf(cliente.getCpf()).isPresent()){
-            throw new CpfJaCadastrado("CPF ja cadastrado");
+            throw new CpfJaCadastrado("CPF ja Cadastrado");
         }
         return clienteRepository.save(cliente);
     }
 
     public void deletarCliente(UUID id) {
+        if (!clienteRepository.existsById(id)){
+            throw new ClienteNaoEncontrado("Cliente não Encontrado.");
+        }
+
         clienteRepository.deleteById(id);
     }
 
-    public Cliente atualizaCliente(UUID id, String email) {
-        Cliente cliente = clienteRepository.findById(id).get();
-        cliente.setEmail(email);
 
-        return clienteRepository.save(cliente);
-    }
 }

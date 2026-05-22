@@ -8,11 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
-@RequestMapping("/clientes")
+@RequestMapping("api/v1/cliente")
 @RestController
 public class ClienteController {
 
@@ -31,13 +32,19 @@ public class ClienteController {
             @RequestParam(required = false) String cpf) {
 
         if (nome != null && !nome.isBlank()) {
-            List<Cliente> cliente = clienteService.buscarPorNome ();
+            List<Cliente> clientes = new ArrayList<>();
+            Cliente cliente1 = clienteService.buscarPorNome(nome);
+            clientes.add(cliente1);
 
-            return ResponseEntity.ok(cliente);
+            return ResponseEntity.ok(clientes);
         }
         if (cpf != null && !cpf.isBlank()) {
-            Cliente cliente = clienteService.buscaPorCpf ();
+            Cliente cliente = clienteService.buscarPorCpf(cpf);
             return ResponseEntity.ok(cliente);
+        }
+        if (cpf == null && nome == null) {
+
+            return ResponseEntity.ok(clienteService.listarClientes());
         }
 
         return ResponseEntity
