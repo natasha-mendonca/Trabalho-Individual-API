@@ -40,7 +40,7 @@ public class ClienteService {
     }
 
     public Cliente buscarPorNome(String nome) {
-        Optional<Cliente> clienteOpt = this.clienteRepository.findByCpf(nome);
+        Optional<Cliente> clienteOpt = this.clienteRepository.findByNome(nome);
 
         if (clienteOpt.isEmpty()) {
             throw new ClienteNaoEncontrado("Cliente não Encontrado");

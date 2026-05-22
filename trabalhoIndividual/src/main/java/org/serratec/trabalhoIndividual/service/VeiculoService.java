@@ -24,6 +24,7 @@ public class VeiculoService {
 
     @Autowired
     private VeiculoRepository veiculoRepository;
+    @Autowired
     private ClienteRepository clienteRepository;
 
     public List<Veiculo> listarVeiculo() {
@@ -80,13 +81,14 @@ public class VeiculoService {
     public VeiculoAtualizar atualizarVeiculo (UUID id, VeiculoAtualizar veiculo){
         Optional<Veiculo> veiculoOpt = veiculoRepository.findById(id);
 
+        if(veiculoOpt.isEmpty()){
+            throw new VeiculoNaoEncontrado("Veiculo com id: " + id + ", não Encontrado");
+        }
+
         if (veiculo.isVendido() && veiculo.getValorVenda() == null) {
             throw new CampoObrigatorio("Valor de Venda não Informado");
         }
 
-        if(veiculoOpt.isEmpty()){
-            throw new VeiculoNaoEncontrado("Veiculo com id: " + id + ", não Encontrado");
-        }
         Veiculo veiculoExistente =  veiculoOpt.get();
 
         veiculoExistente.setMarca(veiculo.getMarca());

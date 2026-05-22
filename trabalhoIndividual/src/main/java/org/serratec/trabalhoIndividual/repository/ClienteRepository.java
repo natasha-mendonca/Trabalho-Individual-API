@@ -11,9 +11,11 @@ import java.util.UUID;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
-    Optional<Cliente> findById(Long id);
+    Optional<Cliente> findByNome (String nome);
 
-    void deleteById(Long id);
+    Optional<Cliente> findById(UUID id);
+
+    void deleteById(UUID id);
 
     List<Cliente> findAll();
 

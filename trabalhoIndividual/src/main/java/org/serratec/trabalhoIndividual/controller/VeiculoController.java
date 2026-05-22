@@ -76,7 +76,7 @@ public class VeiculoController {
     public ResponseEntity<Void> deleteVeiculo(@PathVariable UUID id){
 
         veiculoService.deletarVeiculo(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")

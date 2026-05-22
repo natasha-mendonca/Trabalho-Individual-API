@@ -23,10 +23,9 @@ public class Veiculo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
     @NotNull
-    @Size(max = 60)
-    @Column
+    @ManyToOne
+    @JoinColumn
     private Cliente cliente;
 
     @NotNull
@@ -41,7 +40,6 @@ public class Veiculo {
     @Column(length = 4)
     private int ano;
 
-    @NotNull
     @Min(0)
     @Column
     private double valor;
@@ -54,7 +52,6 @@ public class Veiculo {
     @Column
     private String maximoDesconto;
 
-    @NotNull
     @Column
     private boolean vendido;
 
