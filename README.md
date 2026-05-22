@@ -57,3 +57,6 @@ A API estará disponível em `http://localhost:8080`
 Com a aplicação rodando, acesse o Swagger em:
 `http://localhost:8080/swagger-ui.html`
 
+## Autor
+Natasha Von Markendorf Mendonça
+
